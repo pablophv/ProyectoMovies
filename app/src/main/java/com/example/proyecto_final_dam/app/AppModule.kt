@@ -1,5 +1,8 @@
 package com.example.proyecto_final_dam.app
 
+import com.example.proyecto_final_dam.data.repositories.FirestoreMovieRepository
+import com.example.proyecto_final_dam.domain.repositories.MovieRepository
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -19,8 +22,14 @@ object AppModule {
     //inyectamos la instancia de FireBase para poder llamar a la lista de libros
     @Provides
     @Singleton
-    fun provideBookList(
+    fun provideMovieList(
         firestore: FirebaseFirestore
-    ) =  firestore.collection("movies")
+    ): CollectionReference =  firestore.collection("movies")
+
+    @Provides
+    @Singleton
+    fun provideMovieRepository(firestore: FirebaseFirestore): MovieRepository {
+        return FirestoreMovieRepository(firestore)
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.example.proyecto_final_dam.app
+package com.example.proyecto_final_dam
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

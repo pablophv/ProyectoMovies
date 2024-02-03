@@ -33,10 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.proyecto_final_dam.data.model.Movie
+import com.example.proyecto_final_dam.domain.entities.MovieEntity
 
 @Composable
 fun MovieListItem(
-    movie: Movie,
+    movie: MovieEntity,
     onItemClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit
 ) {
@@ -69,7 +70,7 @@ fun MovieListItem(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = movie.tittle,
+                        text = movie.title,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         modifier = Modifier.padding(bottom = 8.dp)

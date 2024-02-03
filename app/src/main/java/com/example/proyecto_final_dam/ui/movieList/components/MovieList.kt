@@ -60,7 +60,8 @@ fun MovieList(
             }
         }
 
-        if (state.error.isNotBlank()) {
+
+        if (state.error?.isNotBlank() == true) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,6 +75,8 @@ fun MovieList(
         if (state.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
+
+
     }
 }
 

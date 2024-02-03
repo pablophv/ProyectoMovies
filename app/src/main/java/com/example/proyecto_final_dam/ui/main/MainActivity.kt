@@ -6,11 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -20,8 +17,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.proyecto_final_dam.ui.movieList.MovieListScreen
 import com.example.proyecto_final_dam.ui.movieList.MovieListViewModel
 import com.example.proyecto_final_dam.ui.moviedetail.MovieDetailScreen
+import com.example.proyecto_final_dam.ui.moviedetail.MovieDetailState
 import com.example.proyecto_final_dam.ui.moviedetail.MovieDetailViewModel
 import com.example.proyecto_final_dam.ui.navigation.Destination
+import com.example.proyecto_final_dam.data.repositories.Result
+
 import com.example.proyecto_final_dam.ui.theme.Proyecto_Final_DamTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -65,7 +65,8 @@ fun NavGraphBuilder.addMovieList(
     ){
 
         val viewModel: MovieListViewModel = hiltViewModel()
-        val state = viewModel.state.value
+        //val state = viewModel.state.value
+        val state = viewModel.moviesState.collectAsState().value
         val isRefreshing = viewModel.isRefreshing.collectAsState()
 
         MovieListScreen(
@@ -74,7 +75,7 @@ fun NavGraphBuilder.addMovieList(
                 navController.navigate(Destination.MovieDetail.route)
             },
             isRefreshing = isRefreshing.value,
-            refreshData = {viewModel.getMovieList()},
+            refreshData = {viewModel.loadMovies()},
             onItemClick = {movieId ->
                 navController.navigate(
                     Destination.MovieDetail.route + "?movieId=$movieId"
@@ -91,12 +92,19 @@ fun NavGraphBuilder.addMovieDetail() {
     ){
         //creamos una instancia del viewModel
         val viewModel: MovieDetailViewModel = hiltViewModel()
-        val state = viewModel.state.value
+        val result = viewModel.movieState.collectAsState().value // Result<MovieEntity>
 
+        // Transforma Result<MovieEntity> a MovieDetailState
+        val state = when (result) {
+            is Result.Loading -> MovieDetailState(isLoading = true)
+            is Result.Success -> MovieDetailState(movie = result.data)
+            is Result.Error -> MovieDetailState(error = result.message ?: "Error")
+        }
         MovieDetailScreen(
             state = state,
             addNewMovie =viewModel::addNewMovie ,
             updateMovie = viewModel::updateMovie
+
         )
     }
 }

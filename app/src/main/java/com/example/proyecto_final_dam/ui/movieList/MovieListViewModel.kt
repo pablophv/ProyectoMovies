@@ -1,66 +1,56 @@
 package com.example.proyecto_final_dam.ui.movieList
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.proyecto_final_dam.data.repositories.MovieRepository
 import com.example.proyecto_final_dam.data.repositories.Result
+import com.example.proyecto_final_dam.domain.entities.MovieEntity
+import com.example.proyecto_final_dam.domain.repositories.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
-    private val movieRepository: MovieRepository//inyectamos el repositorio
+    private val movieRepository: MovieRepository // usamos la interfaz para la inyección de dependencias
 ) : ViewModel() {
-    /*
-    creamos una variable para controlar los estados de nuestro ui, creamos una data class para controlar
-    los estados
-     */
-    private val _state: MutableState<MovieListState> = mutableStateOf(MovieListState())
-    val state: State<MovieListState> = _state
 
+    private val _moviesState = MutableStateFlow<Result<List<MovieEntity>>>(Result.Loading)
+    val moviesState = _moviesState.map { result ->
+        when (result) {
+            is Result.Loading -> MovieListState(isLoading = true)
+            is Result.Success -> MovieListState(movies = result.data)
+            is Result.Error -> MovieListState(error = result.message)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = MovieListState(isLoading = true)
+    )
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
-
-
-    //cuando cargue el view model se ejecutara la funcion que llama a la lista
     init {
-        getMovieList()
-
+        loadMovies()
     }
 
-    //funcion para obtener lista de libros
-    fun getMovieList() {
-
-        movieRepository.getMovieList().onEach { result ->
-            when (result) {
-                is Result.Error -> {
-
-                    _state.value = MovieListState(error = result.message ?: "Error inesperado")
-                }
-
-                is Result.Loading -> {
-                    _state.value = MovieListState(isLoading = true)
-
-                }
-
-                is Result.Success -> {
-                    _state.value = MovieListState(movies = result.data ?: emptyList())
-
-                }
+    fun loadMovies() {
+        viewModelScope.launch {
+            movieRepository.getMovies().collect { result ->
+                _moviesState.value = result
             }
-
-        }.launchIn(viewModelScope)
-
+        }
     }
+
     fun deleteMovie(movieId: String) {
-        movieRepository.deleteMovie(movieId)
-        getMovieList()//actualiza la lista despues de borrar
+        viewModelScope.launch {
+            movieRepository.deleteMovie(movieId).also {
+                loadMovies() // Recarga la lista después de borrar
+            }
+        }
     }
 }
