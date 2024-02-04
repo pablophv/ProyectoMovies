@@ -6,6 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.proyecto_final_dam.domain.repositories.MovieRepository
 import com.example.proyecto_final_dam.data.repositories.Result
 import com.example.proyecto_final_dam.domain.entities.MovieEntity
+import com.example.proyecto_final_dam.domain.usecases.AddMovieUseCase
+import com.example.proyecto_final_dam.domain.usecases.GetMovieByIdUseCase
+import com.example.proyecto_final_dam.domain.usecases.GetMoviesUseCase
+import com.example.proyecto_final_dam.domain.usecases.UpdateMoviesUseCase
+import com.example.proyecto_final_dam.domain.usecases.UpdateMoviesUseCase_Factory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +21,10 @@ import javax.inject.Inject
 //inyectamos nuestro repositorio usando la interfaz
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor(
-    private val movieRepository: MovieRepository,
-    savedStateHandle: SavedStateHandle
+    private val getMovieByIdUseCase: GetMovieByIdUseCase,//inyectamos el caso de uso para obtener todas las películas
+    private val addMovieUseCase: AddMovieUseCase,//inyectamos el caso de uso para añadir una película
+    private val updateMoviesUseCase: UpdateMoviesUseCase,//inyectamos el caso de uso para actualizar una película
+    savedStateHandle: SavedStateHandle//usamos el savedStateHandle para obtener el id de la película
 ) : ViewModel() {
 
     private val _movieState = MutableStateFlow<Result<MovieEntity>>(Result.Loading)
@@ -35,7 +42,7 @@ class MovieDetailViewModel @Inject constructor(
 
     private fun loadMovie(movieId: String) {
         viewModelScope.launch {
-            movieRepository.getMovieById(movieId).collect { result ->
+            getMovieByIdUseCase(movieId).collect { result ->
                 _movieState.value = result
             }
         }
@@ -44,14 +51,16 @@ class MovieDetailViewModel @Inject constructor(
     fun addNewMovie(title: String, director: String, coverURL: String) {
         viewModelScope.launch {
             val newMovie = MovieEntity(UUID.randomUUID().toString(), coverURL, title, director, 0.0f, 0)//añadimos una nueva pelicula
-            movieRepository.addMovie(newMovie)
+            addMovieUseCase(newMovie).also {
+                loadMovie(newMovie.id)
+            }
         }
     }
 
     fun updateMovie(movie: MovieEntity) {
         viewModelScope.launch {
-            movieRepository.updateMovie(movie).also {
-                loadMovie(movie.id) // recarga los detalles de la película después de actualizar
+            updateMoviesUseCase(movie).also {
+                loadMovie(movie.id)
             }
         }
     }
