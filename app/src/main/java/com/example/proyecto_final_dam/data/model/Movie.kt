@@ -1,5 +1,7 @@
 package com.example.proyecto_final_dam.data.model
-
+/*
+modelo de datos de la pelicula
+ */
 data class Movie(
     val id: String,
     val coverURL: String,
@@ -7,7 +9,4 @@ data class Movie(
     val director: String,
     val rating: Float,
     val downloads: Int
-){
-    //para poder permitir convertir los datos de Firebase a este modelo creamos un constructor
-    constructor() : this("","","","",0.0f,0)
-}
+)

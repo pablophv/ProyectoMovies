@@ -1,5 +1,5 @@
 package com.example.proyecto_final_dam.domain.entities
-
+//modelo de datos de la pelicula
 data class MovieEntity(
     val id: String,
     val coverURL: String,

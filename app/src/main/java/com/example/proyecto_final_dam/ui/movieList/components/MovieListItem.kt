@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.example.proyecto_final_dam.data.model.Movie
 import com.example.proyecto_final_dam.domain.entities.MovieEntity
 
 @Composable

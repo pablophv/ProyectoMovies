@@ -1,6 +1,5 @@
 package com.example.proyecto_final_dam.ui.movieList
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyecto_final_dam.data.repositories.Result

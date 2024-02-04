@@ -29,7 +29,7 @@ fun MovieList(
     onItemClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
 ) {
-
+//esta funcion nos permite mostrar la lista de peliculas
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -41,12 +41,30 @@ fun MovieList(
              */
             onRefresh = { refreshData() }
         ) {
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(NearlyBlack)
             ) {
+                //mostramos la lista de peliculas
+                items(
+                    items = state.movies,
+                    key = { movie -> movie.id }//utilizamos la funcion key para optimizar rendimiento, evita que se reconstruya toda la lista
+                ) { movie ->
+                    MovieListItem(
+                        movie = movie,
+                        onItemClick = onItemClick,
+                        onDeleteClick = onDeleteClick
+                    )
+                }
+            }
+
+            LazyColumn(//mostramos la lista de peliculas
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(NearlyBlack)
+            ) {
+
                 items(
                     items = state.movies,
                     key = { movie -> movie.id }//utilizamos la funcion key para optimizar rendimiento, evita que se reconstruya toda la lista
@@ -60,7 +78,7 @@ fun MovieList(
             }
         }
 
-
+        //si hay un error se muestra un mensaje
         if (state.error?.isNotBlank() == true) {
             Text(
                 modifier = Modifier
@@ -72,6 +90,7 @@ fun MovieList(
                 textAlign = TextAlign.Center
             )
         }
+        //si esta cargando se muestra un circulo de progreso
         if (state.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }

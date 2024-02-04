@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -30,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import com.example.proyecto_final_dam.R
 import com.example.proyecto_final_dam.domain.entities.MovieEntity
 import com.example.proyecto_final_dam.ui.theme.Red100
-import kotlin.reflect.KFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

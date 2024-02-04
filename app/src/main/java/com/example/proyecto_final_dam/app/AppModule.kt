@@ -9,7 +9,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
+/*
+ en este archivo se proveen las instancias de la base de datos FireBase y de la lista de peliculas
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
