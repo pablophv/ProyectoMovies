@@ -54,6 +54,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun MovieListScreen(
     state: MovieListState,
     navigateToMovieDetail: () -> Unit,
@@ -62,13 +63,14 @@ fun MovieListScreen(
     onItemClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)//estado del drawer
+    val scope = rememberCoroutineScope()//scope para el drawer
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {DrawerContent()},
     ) {
+
         Scaffold(
             modifier = Modifier.fillMaxSize(),
 
@@ -81,7 +83,7 @@ fun MovieListScreen(
             floatingActionButton = {
                 MyFloatingActionButton(onClick = navigateToMovieDetail)
             },
-        ) {innerPadding ->
+        ) {innerPadding ->//innerPadding nos permite adaptar el contenido a la pantalla
             MovieList(
                 state = state,
                 isRefreshing = isRefreshing,

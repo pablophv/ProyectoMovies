@@ -21,7 +21,7 @@ class FirestoreMovieRepository @Inject constructor(
     //inyectamos la instancia de FireBase para poder llamar a la lista de peliculas
     override fun getMovies(): Flow<Result<List<MovieEntity>>> = flow {
         try {
-            emit(Result.Loading)
+            emit(Result.Loading)//emite un estado de carga
             val querySnapshot = firestore.collection("movies").get().await()
             val movies = querySnapshot.toObjects(Movie::class.java).map { it.toDomainModel() }
             emit(Result.Success(movies))
@@ -32,18 +32,20 @@ class FirestoreMovieRepository @Inject constructor(
         emit(Result.Error(e.localizedMessage ?: "An error occurred"))
     }
 
-    override suspend fun addMovie(movie: MovieEntity): Result<Unit> {
+    //metodo para añadir una pelicula
+    override suspend fun addMovie(movie: MovieEntity): Result<Unit> {//
         return try {
+            //añadadimos una pelicula a la lista
             firestore.collection("movies").document(movie.id).set(movie.toDataModel()).await()
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e.localizedMessage ?: "An unknown error occurred")
         }
     }
-
+    //metodo para actualizar una pelicula
     override suspend fun updateMovie(movie: MovieEntity): Result<Unit> {
         return try {
-            val movieData = movie.toDataModel()
+            val movieData = movie.toDataModel()//actualizamos una pelicula en la lista
             firestore.collection("movies").document(movie.id).set(movieData).await()
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -63,6 +65,7 @@ class FirestoreMovieRepository @Inject constructor(
     override fun getMovieById(movieId: String): Flow<Result<MovieEntity>> = flow {
         try {
             emit(Result.Loading)
+            //obtenemos una pelicula por su id
             val documentSnapshot = firestore.collection("movies").document(movieId).get().await()
             val movie = documentSnapshot.toObject(Movie::class.java)?.toDomainModel()
             if (movie != null) {
@@ -73,7 +76,7 @@ class FirestoreMovieRepository @Inject constructor(
         } catch (e: Exception) {
             emit(Result.Error(e.localizedMessage ?: "An unknown error occurred"))
         }
-    }.catch { e ->
+    }.catch { e ->//control de errores
         emit(Result.Error(e.localizedMessage ?: "An error occurred"))
     }
 }

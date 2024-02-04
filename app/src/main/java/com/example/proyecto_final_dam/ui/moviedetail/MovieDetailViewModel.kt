@@ -25,8 +25,11 @@ class MovieDetailViewModel @Inject constructor(
 
     init {
         val movieId: String? = savedStateHandle["movieId"]
-        movieId?.let {
-            loadMovie(it)
+        if (movieId != null) {
+            loadMovie(movieId)
+        } else {
+            // Establece un estado inicial que no sea de carga para permitir la adición de una nueva película.
+            _movieState.value = Result.Success(MovieEntity("", "", "", "", 0f, 0))
         }
     }
 
@@ -40,10 +43,8 @@ class MovieDetailViewModel @Inject constructor(
 
     fun addNewMovie(title: String, director: String, coverURL: String) {
         viewModelScope.launch {
-            val newMovie = MovieEntity(UUID.randomUUID().toString(), coverURL, title, director, 0.0f, 0)
-            movieRepository.addMovie(newMovie).also {
-                loadMovie(newMovie.id) // carga el detalle de la nueva película
-            }
+            val newMovie = MovieEntity(UUID.randomUUID().toString(), coverURL, title, director, 0.0f, 0)//añadimos una nueva pelicula
+            movieRepository.addMovie(newMovie)
         }
     }
 

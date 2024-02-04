@@ -39,7 +39,7 @@ fun MovieListItem(
     movie: MovieEntity,
     onItemClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit
-) {
+) {//esta funcion nos permitira mostrar los datos de la pelicula
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -60,7 +60,8 @@ fun MovieListItem(
                 Image(
                     painter = rememberAsyncImagePainter(model = movie.coverURL),
                     contentDescription = "Movie Cover",
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier
+                        .fillMaxHeight()
                         .size(120.dp),
                     contentScale = ContentScale.Crop
                 )
@@ -75,26 +76,19 @@ fun MovieListItem(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
 
+                    Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = "Director: ${movie.director}",
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
 
-                    // Omitido: RatingBar y otros elementos, reemplaza según tu implementación
-
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(30.dp))
 
                     Row {
-                        Button(
-                            onClick = { /* acción de descarga */ },
-                            modifier = Modifier.padding(end = 8.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
-                        ) {
-                            Text("Descargar")
-                        }
-
-                        IconButton(onClick = { onDeleteClick(movie.id) }) {
+                       Text(text = "'Pulsa para modicar'", fontSize = 15.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 10.dp))
+                        Spacer(Modifier.width(60.dp))
+                        IconButton(onClick = { onDeleteClick(movie.id) },modifier = Modifier.size(60.dp)) {
                             Icon(Icons.Filled.Delete, contentDescription = "Eliminar")
                         }
                     }

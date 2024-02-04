@@ -3,14 +3,12 @@ package com.example.proyecto_final_dam.ui.moviedetail
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -24,11 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.proyecto_final_dam.R
 import com.example.proyecto_final_dam.domain.entities.MovieEntity
-import com.example.proyecto_final_dam.ui.theme.Red100
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +52,7 @@ fun MovieDetailScreen(
         )
     }//variable para la URL que escriba el usuario
 
-    Box(
+    Box(//este box nos permitira mostrar los datos de la pelicula
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -91,85 +89,79 @@ fun MovieDetailScreen(
                 value = coverURL,
                 onValueChange = { coverURL = it },
                 label = {
-                    Text(text = "Url Imagen")
+                    Text(text = "Image URL")
                 }
             )
-            Spacer(modifier = Modifier.height(20.dp))
-            Box(modifier = Modifier.fillMaxWidth()) {
 
-                Image(
-                    painterResource(id = R.drawable.portadas),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(350.dp),
-                    contentScale = ContentScale.Crop
-
-
-                )
-            }
-
-        }
-
-        if (state.error.isNotBlank()) {
-            Text(
+            Image(
+                painterResource(id = R.drawable.portadas),
+                contentDescription = "",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                text = state.error,
+                    .size(350.dp),
+                contentScale = ContentScale.Crop
+
+
             )
         }
-//
-        Spacer(modifier = Modifier.height(10.dp))
-        if (state.movie?.id != null) {// si la pelicula que obtenemos es nulo creamos una pelicula nueva
 
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                onClick = {
-                    //funcion para modificar una pelicula
-                    updateMovie(MovieEntity(state.movie.id, coverURL, title, director, 0.0f, 0))
 
-                },
-                /*
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Red100
-                )
-                 */
-
-            ) {
+            if (state.error.isNotBlank()) {
                 Text(
-                    text = "Update Movie",
-                    color = Color.White,
-                    fontSize = 18.sp
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    text = state.error,
+                    style = TextStyle(
+                        color = Color.Red,
+                        textAlign = TextAlign.Center
+                    )
                 )
             }
-        }
+            val isAddingMovie = state.movie?.id.isNullOrEmpty()
+            if (state.isLoading) {
+                CircularProgressIndicator()
+            } else {
+                if (isAddingMovie) {
+                    // Muestra el botón para añadir una nueva película
+                    Button(
+                        onClick = { addNewMovie(title, director, coverURL) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter),
+                        // Configuración del botón
+                    ) {
+                        Text("Add New Movie")
+                    }
+                } else {
 
-        if (state.movie?.id == null) {// si la pelicula que obtenemos es nulo creamos una pelicula nueva
-            Button(//si es nulo modificamos el libro seleccionado
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-                    .align(Alignment.BottomCenter),
-                onClick = {
-                    //funcion para agregar nuevos libros
-                    addNewMovie(title, director, coverURL)
-                },
+                    // Muestra el botón para actualizar la película existente
+                    Button(
+                        onClick = {
+                            updateMovie(
+                                MovieEntity(
+                                    id = state.movie?.id ?: "",
+                                    title = title,
+                                    director = director,
+                                    coverURL = coverURL,
+                                    rating = state.movie?.rating ?: 0f,
+                                    downloads = state.movie?.downloads ?: 0
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter),
 
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Red100
-                )
 
-
-            ) {
-                Text(
-                    text = "Add New Movie",
-                    color = Color.White,
-                    fontSize = 18.sp
-                )
+                    ) {
+                        Text("Update Movie")
+                    }
+                }
             }
-        }
+
+
+
+
 
     }
 }

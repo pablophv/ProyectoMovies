@@ -27,6 +27,7 @@ class MovieListViewModel @Inject constructor(
             is Result.Error -> MovieListState(error = result.message)
         }
     }.stateIn(
+
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = MovieListState(isLoading = true)

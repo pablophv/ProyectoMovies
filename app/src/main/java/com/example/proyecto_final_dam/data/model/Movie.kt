@@ -9,4 +9,7 @@ data class Movie(
     val director: String,
     val rating: Float,
     val downloads: Int
-)
+){
+    //constructor vacio
+    constructor() : this("","","","",0.0f,0)
+}
