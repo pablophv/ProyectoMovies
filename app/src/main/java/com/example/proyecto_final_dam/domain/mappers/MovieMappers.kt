@@ -6,6 +6,7 @@ import com.example.proyecto_final_dam.domain.entities.MovieEntity
 esta clase se encarga de mapear los datos de la base de datos a los
 datos que se usan en la aplicacion
  */
+//convertimos el modelo de datos de la pelicula a un modelo de dominio
 fun Movie.toDomainModel(): MovieEntity {
     return MovieEntity(
         id = this.id,

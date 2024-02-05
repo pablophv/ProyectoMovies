@@ -14,14 +14,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.proyecto_final_dam.data.repositories.Result
 import com.example.proyecto_final_dam.ui.movieList.MovieListScreen
 import com.example.proyecto_final_dam.ui.movieList.MovieListViewModel
 import com.example.proyecto_final_dam.ui.moviedetail.MovieDetailScreen
 import com.example.proyecto_final_dam.ui.moviedetail.MovieDetailState
 import com.example.proyecto_final_dam.ui.moviedetail.MovieDetailViewModel
 import com.example.proyecto_final_dam.ui.navigation.Destination
-import com.example.proyecto_final_dam.data.repositories.Result
-
 import com.example.proyecto_final_dam.ui.theme.Proyecto_Final_DamTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,7 +35,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
+
+
+                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
                         startDestination = Destination.MainScreen.route,
@@ -45,18 +46,17 @@ class MainActivity : ComponentActivity() {
                         addMovieList(navController)
                         addMovieDetail()
                     }
+
                 }
             }
         }
     }
 }
-
 fun NavGraphBuilder.addStartScreen(navController: NavController) {
     composable(route = Destination.MainScreen.route) {
         MainScreen(navController = navController)
     }
 }
-
 fun NavGraphBuilder.addMovieList(
     navController: NavController
 ){
@@ -81,30 +81,29 @@ fun NavGraphBuilder.addMovieList(
                     Destination.MovieDetail.route + "?movieId=$movieId"
                 )
             },
-            onDeleteClick = viewModel::deleteMovie
+            onDeleteClick = viewModel::deleteMovie,
+            dogImageViewModel = hiltViewModel()
         )
     }
 }
-
 fun NavGraphBuilder.addMovieDetail() {
     composable(
         route = Destination.MovieDetail.route + "?movieId={movieId}"
     ){
         //creamos una instancia del viewModel
         val viewModel: MovieDetailViewModel = hiltViewModel()
-        val result = viewModel.movieState.collectAsState().value // Result<MovieEntity>
 
         // Transforma Result<MovieEntity> a MovieDetailState
-        val state = when (result) {
+        val state = when (val result = viewModel.movieState.collectAsState().value) { // Result<MovieEntity>
             is Result.Loading -> MovieDetailState(isLoading = true)
             is Result.Success -> MovieDetailState(movie = result.data)
-            is Result.Error -> MovieDetailState(error = result.message ?: "Error")
+            is Result.Error -> MovieDetailState(error = result.message)
         }
         MovieDetailScreen(
             state = state,
             addNewMovie =viewModel::addNewMovie ,
             updateMovie = viewModel::updateMovie
-
         )
     }
 }
+

@@ -38,15 +38,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.proyecto_final_dam.R
+import coil.compose.rememberAsyncImagePainter
+import com.example.proyecto_final_dam.ui.dogImage.DogImageViewModel
 import com.example.proyecto_final_dam.ui.movieList.components.MovieList
 import com.example.proyecto_final_dam.ui.theme.NearlyBlack
 import kotlinx.coroutines.launch
@@ -56,8 +57,9 @@ import kotlinx.coroutines.launch
 @Composable
 
 fun MovieListScreen(
-    state: MovieListState,
-    navigateToMovieDetail: () -> Unit,
+    dogImageViewModel: DogImageViewModel,//viewModel para obtener la imagen aleatoria de un perro
+    state: MovieListState,//estado de la lista de peliculas
+    navigateToMovieDetail: () -> Unit,//navegar a la pantalla de detalle de la pelicula
     isRefreshing: Boolean,
     refreshData: () -> Unit,
     onItemClick: (String) -> Unit,
@@ -68,7 +70,7 @@ fun MovieListScreen(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        drawerContent = {DrawerContent()},
+        drawerContent = {DrawerContent(dogImageViewModel)},
     ) {
 
         Scaffold(
@@ -137,17 +139,25 @@ fun MyBottomAppBar(onOpenDrawer: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawerContent() {
-
+fun DrawerContent(dogImageViewModel: DogImageViewModel) {
+    val imageUrl = dogImageViewModel.imageUrl.collectAsState().value
     ModalDrawerSheet(
         drawerContainerColor = NearlyBlack,
         content = {
-            Image(
-                painter = painterResource(R.drawable.portadas),
-                contentDescription = "Descripción de la imagen",
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.FillWidth
-            )
+
+            imageUrl?.let { url ->
+                Image(//mostramos la imagen aleatoria de un perro desde la url
+                    painter = rememberAsyncImagePainter(url),
+                    contentDescription = "Imagen aleatoria de un perro",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentScale = ContentScale.FillWidth
+                )
+            } ?: run {
+                Text("Cargando imagen...", modifier = Modifier.padding(16.dp))
+            }
+
             Spacer(Modifier.height(16.dp))
             Column (modifier = Modifier.padding(16.dp)){
                 Button(onClick = {},modifier = Modifier
@@ -199,7 +209,7 @@ fun MyTopAppBarCenter(drawerState: DrawerState) {
             }
         },
         actions = {
-            IconButton(onClick = { /* Acción para el botón de acción */ }) {
+            IconButton(onClick = { }) {
                 Icon(imageVector = Icons.Default.MoreVert, contentDescription = "more options")
             }
         },

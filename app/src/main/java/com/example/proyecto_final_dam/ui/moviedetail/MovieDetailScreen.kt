@@ -93,7 +93,8 @@ fun MovieDetailScreen(
                 }
             )
 
-            Image(
+
+             Image(
                 painterResource(id = R.drawable.portadas),
                 contentDescription = "",
                 modifier = Modifier
@@ -102,6 +103,8 @@ fun MovieDetailScreen(
 
 
             )
+
+
         }
 
 

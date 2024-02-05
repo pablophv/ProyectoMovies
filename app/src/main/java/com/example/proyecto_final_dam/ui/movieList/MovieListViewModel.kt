@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyecto_final_dam.data.repositories.Result
 import com.example.proyecto_final_dam.domain.entities.MovieEntity
-import com.example.proyecto_final_dam.domain.repositories.MovieRepository
 import com.example.proyecto_final_dam.domain.usecases.DeleteMovieUseCase
 import com.example.proyecto_final_dam.domain.usecases.GetMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
     private val deleteMovieUseCase: DeleteMovieUseCase, // inyectamos el caso de uso para eliminar una película
-    private val getMoviesUseCase: GetMoviesUseCase // inyectamos el caso de uso para obtener todas las películas
+    private val getMoviesUseCase: GetMoviesUseCase, // inyectamos el caso de uso para obtener todas las películas
 ) : ViewModel() {
 
     private val _moviesState = MutableStateFlow<Result<List<MovieEntity>>>(Result.Loading)
@@ -40,6 +39,7 @@ class MovieListViewModel @Inject constructor(
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
     init {
         loadMovies()
+
     }
 
     fun loadMovies() {
@@ -58,6 +58,4 @@ class MovieListViewModel @Inject constructor(
             }
         }
     }
-
-
 }

@@ -1,6 +1,5 @@
 package com.example.proyecto_final_dam.ui.main
 
-import android.widget.Space
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.InfiniteTransition
 import androidx.compose.animation.core.RepeatMode
@@ -54,7 +53,7 @@ fun MainScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        animacionCanvas()
+        AnimacionCanvas()
 
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -78,8 +77,8 @@ fun MainScreen(navController: NavController) {
 }
 
 @Composable
-fun animacionCanvas() {
-    val transition: InfiniteTransition = rememberInfiniteTransition()
+fun AnimacionCanvas() {
+    val transition: InfiniteTransition = rememberInfiniteTransition(label = "")
     val radioAnimado by transition.animateFloat(
         initialValue = 50f,
         targetValue = 180f,
