@@ -43,7 +43,7 @@ object AppModule {
     @Provides
     @Singleton//crea y devuelve una instancia de retrofit
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("https://dog.ceo/api/") // Sustituye con la base URL de tu API
+        .baseUrl("https://dog.ceo/api/") //url base de la api
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
